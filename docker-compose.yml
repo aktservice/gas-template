@@ -1,0 +1,12 @@
+services:
+  gas-dev:
+    build: .
+    volumes:
+      - .:/work
+      - /work/node_modules
+      # Share clasp credentials if they exist on host
+      - ~/.clasprc.json:/home/node/.clasprc.json
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true

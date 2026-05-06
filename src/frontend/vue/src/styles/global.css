@@ -1,0 +1,68 @@
+/**
+ * @description グローバルスタイル（例）
+ * @author yoshitaka
+ */
+
+:root {
+  --primary-color: #007bff;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+
+  --border-radius: 0.25rem;
+  --transition-duration: 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--dark-color);
+  background-color: #fff;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+button {
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-duration) ease;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+input,
+textarea,
+select {
+  border-radius: var(--border-radius);
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  font-family: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}

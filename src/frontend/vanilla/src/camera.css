@@ -1,0 +1,10 @@
+.selected {
+  border: 2px solid red;
+}
+.video-responsive {
+  width: 100%; /* 親要素の幅いっぱいに広がるように設定 */
+  max-width: 480px; /* ビデオが横に広がりすぎないように最大幅を指定（お好みで調整してください） */
+  height: auto; /* 幅に合わせて、アスペクト比を保ったまま高さを自動調整 */
+  border-radius: 12px; /* 角を少し丸くすると、見た目が良くなります（任意）*/
+  background-color: #eee; /* 映像が読み込まれるまでの背景色 */
+}

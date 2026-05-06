@@ -1,0 +1,36 @@
+<div class="accordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button
+        class="accordion-button text-center justify-content-center no-icon"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#camera-accordion"
+        aria-expanded="true"
+        aria-controls="camera-accordion"
+      >
+        カメラモジュールを起動(通帳を月１回撮影して下さい)
+      </button>
+    </h2>
+    <div id="camera-accordion" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        {{> import}}
+        <div class="d-flex justify-content-center">
+          <video class="gap-2 mx-auto" id="camera-view"></video>
+          <div class="position-relative d-inline-block">
+            <img id="photo-result" alt="resultPhoto" class="mx-auto d-none m-2" />
+            <span
+              id="select-img"
+              class="badge bg-success position-absolute top-0 start-0 m-2 d-none"
+              >アップロード対象</span
+            >
+          </div>
+        </div>
+        <div><canvas id="capture-canvas"></canvas></div>
+        <div class="d-grid m-2 col-4 mx-auto">
+          <button class="btn btn-outline-secondary rounded-pill" id="photo-shoot">撮影</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
