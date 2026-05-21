@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      Add
+      commentMore
+      actions
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    ;
+
+    <title>Vite + TS</title>
+    <script type="module" crossorigin>(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))s(o);new MutationObserver(o=>{for(const n of o)if(n.type==="childList")for(const i of n.addedNodes)i.tagName==="LINK"&&i.rel==="modulepreload"&&s(i)}).observe(document,{childList:!0,subtree:!0});function e(o){const n={};return o.integrity&&(n.integrity=o.integrity),o.referrerPolicy&&(n.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?n.credentials="include":o.crossOrigin==="anonymous"?n.credentials="omit":n.credentials="same-origin",n}function s(o){if(o.ep)return;o.ep=!0;const n=e(o);fetch(o.href,n)}})();const l=class l extends EventTarget{constructor(t){var s,o,n;super(),this.videoElement=null,this.canvasElement=null,this.photoElement=null,this.accordionElement=null,this.shootElement=null,this.capturedImageData=null,this.badgeElement=null,this.mediaStream=null,this.photoResultStyles={maxWidth:"100%",border:"2px solid #333",marginTop:"10px",height:"auto"};const e={...l.DEFAULT_IDS,...t};if(e.videoElementId){const i=document.getElementById(e.videoElementId);i&&(this.videoElement=i)}if(e.canvasElementId){const i=document.getElementById(e.canvasElementId);i&&(this.canvasElement=i)}if(e.photoElementId){const i=document.getElementById(e.photoElementId);i&&(this.photoElement=i)}if(e.shootElementId){const i=document.getElementById(e.shootElementId);i&&(this.shootElement=i)}if(e.accordionId){const i=document.getElementById(e.accordionId);this.accordionElement=(s=i==null?void 0:i.parentElement)!=null?s:null,console.log(i),i&&(i.addEventListener("show.bs.collapse",()=>{console.log("アコーディオンが開きます。カメラを起動します。"),this.startCamera()}),i.addEventListener("hide.bs.collapse",()=>{console.log("アコーディオンが閉じます。カメラを停止します。"),this.stopCamera()}))}if(e.badgeElementId){const i=document.getElementById(e.badgeElementId);i&&(this.badgeElement=i)}(o=this.videoElement)==null||o.addEventListener("canplay",()=>{if(this.shootElement)this.shootElement.disabled=!1;else return;console.log("カメラの準備が完了しました。撮影可能です。")}),this.applyStyles(),this.initPhoto(),(n=this.shootElement)==null||n.addEventListener("click",()=>{console.log("shoot"),this.takePhoto()})}addEventListener(t,e,s){super.addEventListener(t,e,s)}removeEventListener(t,e,s){super.removeEventListener(t,e,s)}applyStyles(){var t;this.canvasElement&&(this.canvasElement.style.display="none"),this.photoElement&&Object.assign(this.photoElement.style,this.photoResultStyles),(t=this.accordionElement)==null||t.style.setProperty("--bs-accordion-border-color","#ff0000")}initPhoto(){if(!this.canvasElement||!this.videoElement||!this.photoElement)return;this.canvasElement.width=this.videoElement.clientWidth,this.canvasElement.height=this.videoElement.clientHeight;const t=this.canvasElement.getContext("2d");t&&(t.fillStyle="#AAA",t.fillRect(0,0,this.canvasElement.width,this.canvasElement.height),this.photoElement.src=this.canvasElement.toDataURL("image/png"),this.photoElement.classList.add("d-none"))}takePhoto(){var n;if(!this.photoElement||!this.canvasElement||!this.videoElement){console.warn("takePhoto: 写真撮影に必要なDOM要素が設定されていません。");return}console.log("shoot start"),this.photoElement.classList.remove("d-none");const t=this.calcDrawSize();this.canvasElement.width=t.width,this.canvasElement.height=t.height;const e=this.canvasElement.getContext("2d");if(!e){console.error("takePhoto: 2Dコンテキストの取得に失敗しました。");return}e.drawImage(this.videoElement,0,0,this.canvasElement.width,this.canvasElement.height);const s=this.canvasElement.toDataURL("image/png");this.photoElement.src=s,this.capturedImageData=s,this.photoElement.style.display="block",(n=this.badgeElement)==null||n.classList.remove("d-none");const o=new CustomEvent("takePhotoEvent",{detail:{dataURL:s}});this.dispatchEvent(o)}calcDrawSize(){if(!this.videoElement)return{width:0,height:0};const t=this.videoElement.videoHeight/this.videoElement.videoWidth,e=this.videoElement.clientHeight/this.videoElement.clientWidth;return t>e?{height:this.videoElement.clientHeight,width:this.videoElement.clientHeight/t}:{height:this.videoElement.clientWidth*t,width:this.videoElement.clientWidth}}startCamera(){if(!this.videoElement){console.warn("startCamera: videoElementが設定されていないため、カメラを起動できません。");return}this.initVideoCamera()}stopCamera(){this.mediaStream&&(this.mediaStream.getTracks().forEach(t=>t.stop()),console.log("カメラを停止しました。")),this.videoElement&&(this.videoElement.srcObject=null),this.mediaStream=null}getCapturedImageData(){return confirm("写真を採用しますか？"),this.capturedImageData}clearPhoto(){this.capturedImageData=null,this.photoElement&&(this.photoElement.classList.remove("sendpicture"),this.initPhoto())}initVideoCamera(){if(!this.videoElement)return;navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:!1}).then(e=>{this.videoElement&&(this.mediaStream=e,this.videoElement.srcObject=e,this.videoElement.play())}).catch(e=>{console.error("カメラへのアクセス中にエラーが発生しました:",e)})}};l.DEFAULT_IDS={videoElementId:"camera-view",canvasElementId:"capture-canvas",photoElementId:"photo-result",shootElementId:"photo-shoot",accordionId:"camera-accordion",badgeElementId:"select-img"};let a=l;</script>
+    <style rel="stylesheet" crossorigin>.selected{border:2px solid red}.video-responsive{width:100%;max-width:480px;height:auto;border-radius:12px;background-color:#eee}#canvasArea{touch-action:none}</style>
+  </head>
+  <!--camera.html import -->
+  <div class="accordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button text-center justify-content-center no-icon"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#camera-accordion"
+          aria-expanded="true"
+          aria-controls="camera-accordion"
+        >
+          カメラモジュールを起動(通帳を月１回撮影して下さい)
+        </button>
+      </h2>
+      <div id="camera-accordion" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          <div class="container">
+            <div class="row">
+              <div class="input-group text-center mb-3 col-2">
+                <input type="file" id="file-import" class="file-import ms-2 form-control" />
+                <label class="input-group-text" for="file-import">ネットバンキングのスクリーンショット</label>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <video class="gap-2 mx-auto" id="camera-view"></video>
+            <div class="position-relative d-inline-block">
+              <img id="photo-result" alt="resultPhoto" class="mx-auto d-none m-2" />
+              <span
+                id="select-img"
+                class="badge bg-success position-absolute top-0 start-0 m-2 d-none"
+                >アップロード対象</span
+              >
+            </div>
+          </div>
+          <div><canvas id="capture-canvas"></canvas></div>
+          <div class="d-grid m-2 col-4 mx-auto">
+            <button class="btn btn-outline-secondary rounded-pill" id="photo-shoot">撮影</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--import.html import -->
+  <div class="container">
+    <div class="row">
+      <div class="input-group text-center mb-3 col-2">
+        <input type="file" id="file-import" class="file-import ms-2 form-control" />
+        <label class="input-group-text" for="file-import">ネットバンキングのスクリーンショット</label>
+      </div>
+    </div>
+  </div>
+  <!--drawsign.html import -->
+  <dialog id="canvasdialog">
+    <canvas id="canvasArea"></canvas>
+  
+    <div id="dialogclose" class="btn-dark btn-lg text-center">閉じる</div>
+    <div class="container-fluid text-center">
+      <div class="row justify-content-lg-center">
+        <div class="col-12 m-1">
+          <button id="clearButton" class="btn-danger btn-lg col-10">Clear</button>
+        </div>
+        <div class="col12 m-1">
+          <button id="downloadButton" class="btn-warning btn-lg col-10">Download</button>
+        </div>
+        <div class="col12 m-1">
+          <button id="previewButton" class="btn-info btn-lg col-10">サインを採用</button>
+        </div>
+        <div class="col12 m-1">
+          <button id="copyURLButton" class="btn-light btn-lg col-9">URLをコピー</button>
+        </div>
+      </div>
+  
+      <div class="row justify-content-lg-center">
+        <div class="col12 m-1">
+          <div class="input-group-text">
+            <span class="label">ペンの色</span>
+            <div class="control with-color">
+              <div class="color-palette"></div>
+              <input
+                id="pencilColor"
+                class="input"
+                type="text"
+                size="10"
+                name="pencilColor"
+                placeholder="カラーピッカーを開く"
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+  
+        <div class="col12 m-1">
+          <div class="input-group-text">
+            <span class="label">太さ</span>
+            <div class="control half">
+              <input
+                id="pencilSize"
+                class="input"
+                type="number"
+                name="pencilSize"
+                placeholder="ペンの太さを入力"
+              />
+            </div>
+          </div>
+        </div>
+  
+        <div class="col-lg-2 m-1 d-none">
+          <div class="field">
+            <label class="label">透明度</label>
+            <div class="control half">
+              <input
+                id="pencilOpacity"
+                class="input"
+                type="number"
+                name="pencilOpacity"
+                placeholder="Sets the opacity level."
+                min="0"
+                max="1"
+                step="0.1"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+  <div class="column is-half preview-area">
+    <img id="preview" hidden />
+  </div>
+  
+  <div class="btn-wrapper">
+    <button type="button" class="custom-button btn-sign" id="signbtn">
+      <i class="bi bi-pencil"></i> サインする
+    </button>
+  </div>
+
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

@@ -5,8 +5,15 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 import handlebars from "vite-plugin-handlebars";
 import { resolve } from "path";
 
+const project = process.env.PROJECT;
 const frontendType = process.env.FRONTEND || "vue";
-const root = resolve(__dirname, `src/frontend/${frontendType}`);
+
+if (!project) {
+  throw new Error("Vite エラー: PROJECT環境変数を指定してください。");
+}
+
+const root = resolve(__dirname, `projects/${project}/src/frontend`);
+const outDir = resolve(__dirname, `projects/${project}/dist`);
 
 export default defineConfig({
   root,
@@ -20,7 +27,8 @@ export default defineConfig({
     viteSingleFile(),
   ],
   build: {
-    outDir: resolve(__dirname, "dist"),
-    emptyOutDir: false,
+    outDir,
+    emptyOutDir: false, // バックエンドのビルド成果物(backend.js)を消去しないようにする
+    target: "es2019",   // クライアント側JSの互換性を考慮してES2019に引き下げ
   },
 });

@@ -1,4 +1,4 @@
-import { Container } from "../src/backend/core/container";
+import { Container } from "../src/shared/backend/core/container";
 
 describe("Container", () => {
   it("should register and retrieve a service", () => {
