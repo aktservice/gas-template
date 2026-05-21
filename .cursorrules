@@ -1,0 +1,56 @@
+# Cursor Rules - AI Assistant Guidelines
+
+This file configures guidelines and boundaries for the Cursor AI assistant inside this workspace.
+
+## 🎯 Code Style & Conventions
+
+- **Language**: TypeScript (preferred) and JavaScript.
+- **Formatting**:
+  - Indentation: 2 spaces.
+  - Semicolons: Required.
+  - Quotes: Double quotes (`"`) for strings, backticks (\``) for template literals.
+  - Line length: Prefer keeping lines concise.
+- **TypeScript target**: Target **`ES2019`** (as per `tsconfig.json`). Do not write features or methods that aren't compliant with `ES2019` unless compiled.
+
+---
+
+## ⚡ Google Apps Script (GAS) Crucial Rules
+
+1. **GAS Global Declarations**:
+   - Because `esbuild` bundles all backend modules into a single `backend.js` file, top-level functions meant to be triggered by GAS (e.g., custom menus, triggers, Web App endpoints `doGet`/`doPost`, button handlers) **must** be explicitly attached to the `global` object.
+   - Example:
+     ```typescript
+     (global as any).onOpen = () => {
+       // Menu creation logic
+     };
+     ```
+   - Do not declare raw `function myFunc()` at top-level expecting it to be visible without attaching it to `global` if it is processed by the bundler.
+
+2. **Class Compatibility & Fields**:
+   - Do not use private fields (like `#private`) or newer ES Class features since GAS V8 compiler output can easily break. Use standard TypeScript `private`/`protected`/`public` access modifiers.
+   - Keep class definitions simple and standard.
+
+3. **HTTP/Network Calls inside GAS**:
+   - Use `UrlFetchApp.fetch(url, options)` instead of `fetch()` or `axios`.
+   - Always catch errors and use `LoggerService.error` to format the stack trace.
+
+---
+
+## 🏗️ Architecture and Shared Libraries
+
+- When writing business logic:
+  - Check if the logic is generic. If it is generic (like logging, mail templates, sheet CRUD), put it in `src/shared/backend/`.
+  - If it is specific to a project, place it inside `projects/<project-name>/src/backend/`.
+- **Database Interaction**:
+  - Always use `SheetRepository<T>` for reading/writing tables on Google Sheets. Do not manually invoke `SpreadsheetApp.getActiveSpreadsheet().getSheetByName(...)` everywhere. Keep data access abstracted!
+- **Dependency Injection**:
+  - Register global service instances using the shared `Container` (`src/shared/backend/core/container.ts`).
+
+---
+
+## 📦 Build parameters
+
+- Remember that projects are built parameter-driven. When analyzing compilation errors:
+  - Do not create a new `tsconfig.json` or `package.json` inside a project folder.
+  - All type mappings are resolved globally.
+  - Static HTML files built by Vite must bundle all assets inside a single file using `vite-plugin-singlefile` for GAS compliance.

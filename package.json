@@ -3,23 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "clean": "node -e \"const fs=require('fs'); if(fs.existsSync('./dist')) fs.rmSync('./dist', {recursive:true, force:true}); fs.mkdirSync('./dist')\"",
     "dev:vue": "FRONTEND=vue vite",
     "dev:vanilla": "FRONTEND=vanilla vite",
-    "build:be": "node esbuild.js",
-    "build:vue": "npm run clean && FRONTEND=vue vite build && npm run build:be && npm run copy",
-    "build:vanilla": "npm run clean && FRONTEND=vanilla vite build && npm run build:be && npm run copy",
-    "build:one-time": "npm run clean && ENTRY_TYPE=one-time node esbuild.js && npm run copy",
-    "build:be-only": "npm run clean && npm run build:be && npm run copy",
-    "copy": "node -e \"const fs=require('fs'); if(fs.existsSync('./appsscript.json')) fs.copyFileSync('./appsscript.json', './dist/appsscript.json'); if(fs.existsSync('./src/backend/static')) fs.cpSync('./src/backend/static', './dist', {recursive: true})\"",
-    "push": "clasp push",
-    "deploy:vue": "npm run build:vue && npm run push",
-    "deploy:vanilla": "npm run build:vanilla && npm run push",
-    "deploy:one-time": "npm run build:one-time && npm run push",
-    "deploy:be-only": "npm run build:be-only && npm run push",
+    "build": "node scripts/build.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.{ts,vue,html}\" \"test/**/*.ts\""
+    "format": "prettier --write \"src/**/*.{ts,vue,html}\" \"projects/**/*.{ts,vue,html}\" \"test/**/*.ts\""
   },
   "devDependencies": {
     "@google/clasp": "^2.4.2",

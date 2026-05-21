@@ -1,25 +1,28 @@
 {
-  "compilerOptions": {
-    "target": "ES2022", // GAS V8エンジンに合わせてモダンに
-    "module": "ESNext",
-    "moduleResolution": "Bundler", // Vite/esbuildを使う場合の推奨設定
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true, // 各ファイルを個別のモジュールとして扱う
-    "noEmit": true, // 基本はビルドツール(Vite/esbuild)が変換するのでTSは型チェックのみ
-    // 型定義の参照設定
-    "typeRoots": [
-      "./node_modules/@types",
-      "./@types"
-    ],
-    "types": [
-      "google-apps-script"
-    ]
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+	"compilerOptions": {
+		"target": "ES2019", // GAS V8エンジンに合わせてモダンかつ互換性のあるES2019に
+		"module": "ESNext",
+		"moduleResolution": "Bundler", // Vite/esbuildを使う場合の推奨設定
+		"strict": true,
+		"strictPropertyInitialization": false,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true, // 各ファイルを個別のモジュールとして扱う
+		"noEmit": true, // 基本はビルドツール(Vite/esbuild)が変換するのでTSは型チェックのみ
+		// 型定義の参照設定
+		"typeRoots": [
+			"./node_modules/@types",
+			"./@types"
+		],
+		"types": [
+			"google-apps-script",
+			"jest",
+			"node"
+		]
+	},
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
 }

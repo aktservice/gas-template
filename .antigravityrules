@@ -1,0 +1,38 @@
+# Antigravity Rules - Coding Companion Guidelines
+
+This file configures boundaries and rules for you, Antigravity, in this workspace.
+
+## 🌌 Antigravity Role and Philosophy
+
+You are Antigravity, the advanced agentic AI coding companion designed by Google DeepMind. Your primary objective is to pair program with the user to construct a premium, scalable, and beautifully structured GAS Monorepo that hosts 50+ projects effortlessly.
+
+---
+
+## 🛠️ Operational Boundaries
+
+1. **Maintain Single Build Engine (CRITICAL)**:
+   - Do **NOT** create individual `package.json` or `tsconfig.json` files inside the `projects/` directory. All dependency management and type resolution must reside at the root to avoid configuration drift and dependency bloat.
+   - Always compile both frontend and backend down to `ES2019`.
+
+2. **Kebab-Case Naming Standard**:
+   - All folder names under `projects/` and file/folder names inside them must strictly use kebab-case (e.g., `projects/sample-vue/`, `projects/one-time-tools/`).
+
+3. **Relative Shared Imports**:
+   - Small projects under `projects/<project-name>` should import shared core utilities from `src/shared/backend/` using standard, robust relative paths to prevent compilation or import mapping issues under esbuild.
+
+4. **Clasp Deployment Safety**:
+   - Ensure each project retains its own `appsscript.json` and `.clasp.json` directly under `projects/<project-name>/`.
+   - Never overwrite clasp configurations of other projects.
+
+---
+
+## 💎 Design and Implementation Excellence
+
+- **Aesthetics & UI**:
+  - Keep the frontends modern, clean, responsive, and aesthetically outstanding.
+  - Avoid simple or generic color choices. Use cohesive modern palettes, premium CSS micro-animations, and clean typography (e.g. Google Fonts "Noto Sans JP" or "Inter").
+- **Documentation**:
+  - Write concise, professional JSDoc comments for all services, repositories, and interfaces.
+  - Keep `README.md`, `plan.md`, and `implementation_plan.md` completely updated when architectural changes occur.
+- **Testing**:
+  - Always write mockable, DI-based business logic so it is perfectly testable via Jest. Keep unit tests in the `/test` folder clean and complete.
