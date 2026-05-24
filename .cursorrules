@@ -1,56 +1,55 @@
 # Cursor Rules - AI Assistant Guidelines
 
-This file configures guidelines and boundaries for the Cursor AI assistant inside this workspace.
+このファイルは、このワークスペース内における Cursor AI アシスタントの行動指針、コードスタイル、および制約を定義するものです。
 
-## 🎯 Code Style & Conventions
+## 🎯 コードスタイルと言語規則
 
-- **Language**: TypeScript (preferred) and JavaScript.
-- **Formatting**:
-  - Indentation: 2 spaces.
-  - Semicolons: Required.
-  - Quotes: Double quotes (`"`) for strings, backticks (\``) for template literals.
-  - Line length: Prefer keeping lines concise.
-- **TypeScript target**: Target **`ES2019`** (as per `tsconfig.json`). Do not write features or methods that aren't compliant with `ES2019` unless compiled.
+- **使用言語**: TypeScript（推奨）および JavaScript。
+- **フォーマット規則**:
+  - インデント: スペース2つ。
+  - セミコロン: 必須（Required）。
+  - クォーテーション: 文字列にはダブルクォーテーション (`"`) 、テンプレートリテラルにはバッククォート (`` ` ``) を使用。
+  - 行の長さ: 読みやすさを重視し、長くなりすぎないように簡潔に保つ。
+- **TypeScript ターゲット**: `tsconfig.json` に準拠し、**`ES2019`** をターゲットとします。ビルド後に互換性のない機能やメソッドは使用しないでください。
 
 ---
 
-## ⚡ Google Apps Script (GAS) Crucial Rules
+## ⚡ Google Apps Script (GAS) 必須ルール
 
-1. **GAS Global Declarations**:
-   - Because `esbuild` bundles all backend modules into a single `backend.js` file, top-level functions meant to be triggered by GAS (e.g., custom menus, triggers, Web App endpoints `doGet`/`doPost`, button handlers) **must** be explicitly attached to the `global` object.
-   - Example:
-     ```typescript
+1. **GAS グローバル関数の宣言**:
+   - `esbuild` はバックエンドの全モジュールを単一の `backend.js` にバンドルするため、GASのトリガー（`onOpen`, `doGet`, `doPost` など）やマクロ、シーツ上のボタンから呼び出すトップレベル関数は、**必ず明示的に `global` オブジェクトに割り当てる**必要があります。
+   - 実装例:
+```typescript
      (global as any).onOpen = () => {
-       // Menu creation logic
+       // メニュー作成ロジックなど
      };
      ```
-   - Do not declare raw `function myFunc()` at top-level expecting it to be visible without attaching it to `global` if it is processed by the bundler.
+   - バンドラーを経由するため、`global` に添付せずにトップレベルで単に `function myFunc()` と宣言しただけでは、GAS側から認識されないため注意してください。
 
-2. **Class Compatibility & Fields**:
-   - Do not use private fields (like `#private`) or newer ES Class features since GAS V8 compiler output can easily break. Use standard TypeScript `private`/`protected`/`public` access modifiers.
-   - Keep class definitions simple and standard.
+2. **クラスの互換性とフィールド**:
+   - GASのV8コンパイラで予期せぬエラーが発生するのを防ぐため、JavaScriptのネイティブプライベートフィールド（`#private`）などの新しいESクラス機能は使用しないでください。アクセスコントロールには、TypeScript標準の `private` / `protected` / `public` 修飾子を使用します。
+   - クラス定義はシンプルかつ標準的な構造を維持してください。
 
-3. **HTTP/Network Calls inside GAS**:
-   - Use `UrlFetchApp.fetch(url, options)` instead of `fetch()` or `axios`.
-   - Always catch errors and use `LoggerService.error` to format the stack trace.
-
----
-
-## 🏗️ Architecture and Shared Libraries
-
-- When writing business logic:
-  - Check if the logic is generic. If it is generic (like logging, mail templates, sheet CRUD), put it in `src/shared/backend/`.
-  - If it is specific to a project, place it inside `projects/<project-name>/src/backend/`.
-- **Database Interaction**:
-  - Always use `SheetRepository<T>` for reading/writing tables on Google Sheets. Do not manually invoke `SpreadsheetApp.getActiveSpreadsheet().getSheetByName(...)` everywhere. Keep data access abstracted!
-- **Dependency Injection**:
-  - Register global service instances using the shared `Container` (`src/shared/backend/core/container.ts`).
+3. **GAS内部でのHTTP・ネットワーク通信**:
+   - 標準の `fetch()` や `axios` ではなく、必ず `UrlFetchApp.fetch(url, options)` を使用してください。
+   - エラーハンドリングを徹底し、スタックトレースを適切にフォーマットしてロガー（`LoggerService` など）に記録してください。
 
 ---
 
-## 📦 Build parameters
+## 🏗️ アーキテクチャと共通ライブラリの設計
 
-- Remember that projects are built parameter-driven. When analyzing compilation errors:
-  - Do not create a new `tsconfig.json` or `package.json` inside a project folder.
-  - All type mappings are resolved globally.
-  - Static HTML files built by Vite must bundle all assets inside a single file using `vite-plugin-singlefile` for GAS compliance.
+- **コードの配置**:
+  - すべてのバックエンドのビジネスロジック、汎用ユーティリティ（ロギング、メールテンプレート、シートCRUDなど）は、`src/backend/` 配下の適切なディレクトリ（`core/`, `repositories/`, `services/` など）に整理して配置します。
+- **データベース操作（スプレッドシート）**:
+  - Google Sheetsに対するデータの読み書きには、抽象化された `SheetRepository<T>` を使用してください。各所に `SpreadsheetApp.getActiveSpreadsheet().getSheetByName(...)` を直接記述してはいけません。データアクセス層は必ず隠蔽します。
+- **依存性の注入 (DI)**:
+  - グローバルなサービスインスタンスの登録や管理には、プロジェクト共通の `Container`（`src/backend/core/container.ts` など）を利用してください。
+
+---
+
+## 📦 ビルドとデプロイの前提
+
+- **単一設定の維持**:
+  - `tsconfig.json` や `package.json` はルート直下のものを唯一の正とします。サブディレクトリ内に個別の設定ファイルを作成しないでください。
+- **フロントエンドのGAS最適化**:
+  - Viteを使用してフロントエンド（HTML/CSS/JS）を構築する場合、GASのインライン展開仕様に対応するため、必ず `vite-plugin-singlefile` を使用してすべての資産を単一のHTMLファイル（`dist/sendmail.html` など）にバンドルしてください。

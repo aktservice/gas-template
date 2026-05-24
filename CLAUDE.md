@@ -1,68 +1,45 @@
 # CLAUDE.md - AI Agent Guidelines
 
-This file guides AI agents (like Claude Code) on build commands, code style, and architectural patterns of this GAS Monorepo repository.
+このファイルは、AIエージェント（Claude Code 等）に対して、このGASプロジェクトのビルドコマンド、ディレクトリ構造、およびアーキテクチャパターンを指示するものです。
 
-## 🚀 Build and Development Commands
+## 🚀 ビルドおよび開発コマンド
 
-All active development is parameterized by project name. Use the following commands:
+すべての開発コマンドは環境変数に依存せず、単一のプロジェクトとして実行されます。
 
-### 1. Build Orchestration
-- **Build a project**: `PROJECT=<project-name> FRONTEND=<vue|vanilla> node scripts/build.js`
-  *(e.g., `PROJECT=sample-vue FRONTEND=vue node scripts/build.js`)*
-- **Clean output**: Handled automatically by the build script, but manually: `PROJECT=<project-name> node -e "const fs=require('fs'); fs.rmSync('./projects/' + process.env.PROJECT + '/dist', {recursive:true, force:true})"`
+### 1. ビルドコマンド
+- **プロジェクトのビルド**: `npm run build` (内部で `node scripts/build.js` を実行)
+- **出力先のクリーンアップ**: ビルドスクリプト内で自動実行されますが、手動で行う場合は以下を実行:
+  `node -e "const fs=require('fs'); fs.rmSync('./dist', {recursive:true, force:true})"`
 
-### 2. Local Development Server
-- **Vue Dev Server**: `PROJECT=<project-name> FRONTEND=vue npm run dev:vue`
-- **Vanilla Dev Server**: `PROJECT=<project-name> FRONTEND=vanilla npm run dev:vanilla`
+### 2. ローカル開発サーバー (フロントエンドがある場合)
+- **フロントエンドの起動 (Vite)**: `npx vite` または `npm run dev` (設定されている場合)
 
-### 3. Testing and Code Quality
-- **Run all unit tests**: `npm run test`
-- **Typecheck code**: `npm run typecheck` (Checks all projects and shared libraries under ES2019 settings)
-- **Format code**: `npm run format` (Prettier)
+### 3. テストおよびコード品質
+- **すべての単体テストを実行**: `npm run test`
+- **型チェックの実行**: `npm run typecheck` (ES2019設定でプロジェクト全体の型を確認)
+- **コードのフォーマット**: `npm run format` (Prettier)
 
 ---
 
-## 📂 Repository Structure
+## 📂 リポジトリ構造 (Repository Structure)
 
 ```text
 .
 ├── src/
-│   └── shared/                  # Shared utility code
-│       └── backend/             # Shared GAS Backend (DI, Logger, Mail, Repositories, API client)
-│           ├── core/
-│           ├── api/             # GAS Web App API Client (api.ts)
-│           ├── services/
-│           └── repositories/
-├── projects/                    # Independent GAS Projects (Up to 50+)
-│   ├── <project-name>/
-│   │   ├── src/
-│   │   │   ├── backend/         # Project entrypoint index.ts & business logic
-│   │   │   └── frontend/        # Vue / Vanilla frontend files
-│   │   ├── appsscript.json      # GAS Project Manifest
-│   │   ├── .clasp.json          # clasp deployment link
-│   │   └── dist/                # Output of esbuild & vite bundles (target of clasp push)
-├── package.json                 # Single centralized package.json (Shared dependencies)
-├── tsconfig.json                # Parameterized TS compiler config (Targets ES2019!)
-├── esbuild.js                   # Common esbuild engine
-└── vite.config.ts               # Common Vite bundler
-```
-
----
-
-## 🎨 Coding and Architectural Rules
-
-1. **ES2019 Compliance (CRITICAL)**:
-   - Always target **`ES2019`** compilation output. GAS's V8 engine cannot correctly evaluate newer compiled JS class formats containing modern private variables/member initializers.
-   - Do not use modern JS classes' private properties (`#property`) unless compiling to ES2019.
-
-2. **Imports & Code Sharing**:
-   - Small projects must import shared backend helpers from `src/shared/backend/` using relative imports (e.g. `import { LoggerService } from "../../../../src/shared/backend/services/LoggerService"`).
-   - Keep project folders lightweight: they should NOT contain local `package.json`, `tsconfig.json`, or `node_modules` folders.
-
-3. **Backend Structure**:
-   - Use the **DI Container** (`src/shared/backend/core/container.ts`) to wire up dependencies.
-   - Database operations must inherit from `IRepository<T>` and use `SheetRepository<T>` for Google Sheet database interactions.
-   - Write logs via `LoggerService` to maintain standardized, clean log formats.
-
-4. **Frontend Structure**:
-   - Bundle all CSS (Tailwind/Custom) and Javascript directly into a single file (`vite-plugin-singlefile`) so it can be served cleanly in Apps Script's `HtmlService`.
+│   ├── backend/                 # GAS バックエンドのソースコード
+│   │   ├── core/                # DIコンテナ、共通設定
+│   │   ├── api/                 # Web Appのエンドポイント（doGet/doPostなど）
+│   │   ├── services/            # ビジネスロジック（MailServiceなど）
+│   │   ├── repositories/        # データアクセス（SheetRepositoryなど）
+│   │   └── index.ts             # バックエンドのエントリーポイント
+│   └── frontend/                # フロントエンドのソースコード (Vue / Vanillaなど)
+├── dist/                        # esbuild & Vite の出力先 (clasp push の対象)
+│   ├── appsscript.json          # GAS プロジェクトの定義ファイル
+│   ├── backend.js               # バンドルされたバックエンドコード
+│   └── index.html               # フロントエンドがある場合の単一HTML
+├── appsscript.json              # ルート管理の GAS マニフェスト
+├── .clasp.json                  # clasp のデプロイ連携設定
+├── package.json                 # 依存関係の一元管理
+├── tsconfig.json                # TSコンパイラ設定 (ターゲット: ES2019)
+├── esbuild.js                   # バックエンド用 esbuild 設定ファイル
+└── vite.config.ts               # フロントエンド用 Vite 設定ファイル

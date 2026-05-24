@@ -2,24 +2,11 @@ import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 
-const project = process.env.PROJECT;
-const frontend = process.env.FRONTEND; // 'vue', 'vanilla', or omitted/none
+// 単独プロジェクト用にルートのパスを定義
+const distPath = path.resolve("dist");
+const srcPath = path.resolve("src");
 
-if (!project) {
-  console.error("❌ エラー: PROJECT環境変数が指定されていません。");
-  console.error("使用例: PROJECT=sample-vue FRONTEND=vue node scripts/build.js");
-  process.exit(1);
-}
-
-const projectPath = path.resolve("projects", project);
-const distPath = path.join(projectPath, "dist");
-
-if (!fs.existsSync(projectPath)) {
-  console.error(`❌ エラー: 指定されたプロジェクトフォルダ '${project}' が存在しません。`);
-  process.exit(1);
-}
-
-console.log(`\n🚀 [Monorepo Builder] プロジェクト '${project}' のビルドを開始します...\n`);
+console.log(`\n🚀 [Project Builder] ビルドを開始します...\n`);
 
 // 1. distフォルダの初期化 (クリーンアップ)
 try {
@@ -33,56 +20,50 @@ try {
   process.exit(1);
 }
 
-// 2. フロントエンドのビルド (指定がある場合のみ)
-if (frontend && (frontend === "vue" || frontend === "vanilla")) {
-  console.log(`📦 フロントエンドのビルドを実行中 (${frontend})...`);
+// 2. フロントエンドのビルド (vite.config.ts やフロントエンドコードが存在する場合のみ実行)
+// ※もしフロントエンドが完全に不要（BEのみ）なら、このif文ブロックごと削除しても大丈夫です。
+const hasFrontend =
+  fs.existsSync(path.join(srcPath, "frontend")) || fs.existsSync(path.resolve("vite.config.ts"));
+
+if (hasFrontend) {
+  console.log(`📦 フロントエンドのビルドを実行中 (Vite)...`);
   try {
-    execSync(`npx vite build`, {
-      stdio: "inherit",
-      env: {
-        ...process.env,
-        PROJECT: project,
-        FRONTEND: frontend
-      }
-    });
+    execSync(`npx vite build`, { stdio: "inherit" });
     console.log(`✅ フロントエンドのビルドに成功しました。`);
   } catch (err) {
     console.error(`❌ フロントエンドのビルドに失敗しました。`);
     process.exit(1);
   }
 } else {
-  console.log(`⏭️ フロントエンド指定がないため、フロントエンドのビルドをスキップします。`);
+  console.log(`⏭️ フロントエンド構成が見つからないため、ビルドをスキップします。`);
 }
 
 // 3. バックエンドのビルド (esbuild)
 console.log(`⚙️ バックエンドのビルドを実行中...`);
 try {
-  execSync(`node esbuild.js`, {
-    stdio: "inherit",
-    env: {
-      ...process.env,
-      PROJECT: project
-    }
-  });
+  execSync(`node esbuild.js`, { stdio: "inherit" });
   console.log(`✅ バックエンドのビルドに成功しました。`);
 } catch (err) {
   console.error(`❌ バックエンドのビルドに失敗しました。`);
   process.exit(1);
 }
 
-// 4. appsscript.json のコピー
-const appsscriptJsonPath = path.join(projectPath, "appsscript.json");
+// 4. appsscript.json のコピー (ルート直下、またはsrc/backend直下から探す)
+let appsscriptJsonPath = path.resolve("appsscript.json");
+if (!fs.existsSync(appsscriptJsonPath)) {
+  appsscriptJsonPath = path.join(srcPath, "backend", "appsscript.json");
+}
 const appsscriptJsonDest = path.join(distPath, "appsscript.json");
 
 if (fs.existsSync(appsscriptJsonPath)) {
   fs.copyFileSync(appsscriptJsonPath, appsscriptJsonDest);
   console.log(`📄 appsscript.json をコピーしました。`);
 } else {
-  console.warn(`⚠️ 警告: appsscript.json がプロジェクト配下に見つかりません。`);
+  console.warn(`⚠️ 警告: appsscript.json が見つかりません。`);
 }
 
-// 5. 静的アセット (static) のコピー (存在する場合のみ)
-const staticPath = path.join(projectPath, "src/backend/static");
+// 5. 静的アセット (static) のコピー (src/backend/static が存在する場合のみ)
+const staticPath = path.join(srcPath, "backend/static");
 if (fs.existsSync(staticPath)) {
   try {
     fs.cpSync(staticPath, distPath, { recursive: true });
@@ -93,5 +74,5 @@ if (fs.existsSync(staticPath)) {
   }
 }
 
-console.log(`\n🎉 [Monorepo Builder] プロジェクト '${project}' のビルドが正常に完了しました！`);
+console.log(`\n🎉 [Project Builder] ビルドが正常に完了しました！`);
 console.log(`成果物出力先: ${distPath}\n`);
