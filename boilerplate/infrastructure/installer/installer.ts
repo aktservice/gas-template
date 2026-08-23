@@ -4,7 +4,7 @@ import {
   SCHEMA,
   SheetConfig,
   TRIGGERS,
-} from "../../schema/schema";
+} from "../schema/schema";
 
 export function setupSpreadsheet(): void {
   const spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet =

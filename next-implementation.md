@@ -17,6 +17,9 @@
 | `npm run typecheck` | ❌ 失敗（4 件） | `boilerplate/infrastructure` の相対パス誤り、テストの参照先不在 |
 | `npm test` | ❌ 失敗 | `test/container.test.ts` が存在しない `src/shared/backend/core/container` を参照 |
 
+> **実装状況（2026-08-23 更新）**: 上表は**調査時点**の状態です。§6 の **Phase 1 は実装済み**で、
+> 現在は 3 コマンドすべてが成功します（検証ログは末尾の付録参照）。Phase 2 / Phase 3 は未着手です。
+
 次期実装の最優先事項は **「新機能追加ではなく、テンプレートの一貫性回復（構成・ビルド・ドキュメントの整合）」** です。P0 は 1 日程度の作業量で、これを終えれば「clone → `npm ci` → `npm run build` → `clasp push`」が成立します。
 
 ---
@@ -171,7 +174,7 @@ Test Suites: 1 failed, 1 total / Tests: 0 total
 
 ## 5. 具体的な実装提案
 
-### 5-1. `esbuild.js` — `PROJECT` 依存を撤去（P0-1）
+### 5-1. `esbuild.js` — `PROJECT` 依存を撤去（P0-1）✅ 実施済み
 
 ```js
 import esbuild from "esbuild";
@@ -204,7 +207,7 @@ esbuild
 
 未使用の `import { resolve } from "path"` も削除します。
 
-### 5-2. `vite.config.ts` — `PROJECT` 依存を撤去し、フロント種別を自動判定（P0-1 / P2-7）
+### 5-2. `vite.config.ts` — `PROJECT` 依存を撤去し、フロント種別を自動判定（P0-1 / P2-7）✅ 実施済み
 
 ```ts
 const root = resolve(__dirname, "src/frontend");
@@ -217,7 +220,7 @@ const frontendType =
 
 `build.js` 側のフロント有無判定も、`vite.config.ts` の存在ではなく **`src/frontend/index.html` の存在**で行うよう変更します（BE-only 構成で Vite を空振りさせないため）。
 
-### 5-3. `src/backend/index.ts` の新規作成（P0-3 / P2-2）
+### 5-3. `src/backend/index.ts` の新規作成（P0-3 / P2-2）✅ 実施済み（`infrastructure` 結線を除く）
 
 「共通コード置き場」で終わっている `src/` に、**動く最小のエントリポイント**を置きます。DI コンテナと `infrastructure` を実際に結線し、テンプレートの機能が到達可能な状態にします。
 
@@ -306,7 +309,7 @@ import パスを修正（`../../schema/schema` → `../schema/schema`、`./schem
 
 `dev:vue` / `dev:vanilla` は 5-2 の自動判定により `dev` 1 本に統合できます（`FRONTEND=vanilla npm run dev` で明示上書きも可）。
 
-### 5-7. テストの修復と拡充（P0-6）
+### 5-7. テストの修復と拡充（P0-6）✅ 参照先の修復のみ実施済み（テスト拡充は Phase 3）
 
 ```ts
 import { Container } from "../src/backend/core/container";
@@ -320,7 +323,7 @@ import { Container } from "../src/backend/core/container";
 
 ※ `Container.services` が `static` のためテスト間で状態が漏れます。`reset()` を追加し `afterEach` で呼ぶ想定です。
 
-### 5-8. ルート `appsscript.json` の追加（P0-4）
+### 5-8. ルート `appsscript.json` の追加（P0-4）✅ 実施済み
 
 `boilerplate/*/appsscript.json` は 4 種すべて同一内容（Drive v3 / Sheets v4 / STACKDRIVER / V8 / Asia/Tokyo）。ルートに既定値を 1 つ置き、Web App 用の設定はコメント代わりにドキュメント化します。
 
@@ -353,7 +356,7 @@ import { Container } from "../src/backend/core/container";
 
 `boilerplate/` は「コピー元」であり、共通層を前提に書かれた `index.ts` を単体で型検査すると解決不能な import が残ります。**ひな型の健全性は CI 側で「コピーしてビルドが通るか」で担保**する方針（5-11）に切り替えます。
 
-### 5-11. CI の新設（P2-9）
+### 5-11. CI の新設（P2-9）✅ verify job のみ実施済み
 
 `.github/workflows/ci.yml`:
 
@@ -379,14 +382,16 @@ import { Container } from "../src/backend/core/container";
 
 ## 6. ロードマップと完了条件
 
-### Phase 1 — 一貫性の回復（P0、目安 0.5〜1 日）
+### Phase 1 — 一貫性の回復（P0、目安 0.5〜1 日）→ ✅ 完了
 
-- [ ] `esbuild.js` / `vite.config.ts` の `PROJECT` 依存を撤去（5-1 / 5-2）
-- [ ] `src/backend/index.ts` を新規作成（5-3）
-- [ ] ルート `appsscript.json` を追加（5-8）
-- [ ] `infrastructure` の import パス修正（5-5 前半）
-- [ ] `test/container.test.ts` の参照先修正（5-7）
-- [ ] **DoD**: `npm run build` / `npm run typecheck` / `npm test` がすべて成功し、`dist/backend.js` と `dist/appsscript.json` が生成される
+- [x] `esbuild.js` / `vite.config.ts` の `PROJECT` 依存を撤去（5-1 / 5-2）
+- [x] `src/backend/index.ts` を新規作成（5-3、`infrastructure` の結線は Phase 3 に据え置き）
+- [x] ルート `appsscript.json` を追加（5-8、最小権限＝`enabledAdvancedServices` は空）
+- [x] `infrastructure` の import パス修正（5-5 前半）
+- [x] `test/container.test.ts` の参照先修正（5-7）
+- [x] `scripts/build.js` のフロントエンド有無判定を修正（5-2 後半 / P2-7）
+- [x] CI ワークフローの新設（5-11 の verify job。boilerplate matrix は `scripts/init.js` 待ちで Phase 2）
+- [x] **DoD 達成**: `npm run build` / `npm run typecheck` / `npm test` がすべて成功し、`dist/backend.js` と `dist/appsscript.json` が生成されることを確認（付録参照）
 
 ### Phase 2 — テンプレート導線と CI（P1、目安 1 日）
 
@@ -424,12 +429,41 @@ import { Container } from "../src/backend/core/container";
 
 ## 付録: 検証コマンドと環境
 
+### 調査時点（コミット `990dff0`）
+
 ```bash
 node -v   # v22.22.2
 npm ci    # 573 packages / 13 vulnerabilities (high 6, moderate 6, low 1)
 npm run typecheck   # → 4 errors (TS2307 x4)
 npm test            # → 1 failed suite / 0 tests
 npm run build       # → Vite config load error (PROJECT 未定義)
+```
+
+### Phase 1 実装後
+
+```bash
+npm run typecheck   # → エラー 0
+npm test            # → Test Suites: 1 passed / Tests: 2 passed
+npm run build       # → 成功。dist/{backend.js, appsscript.json} を生成
+```
+
+フロントエンド構成での動作も、`boilerplate/` の各ひな型を一時的に `src/frontend/` へ配置して確認済み。
+
+| 構成 | `src/frontend` | 判定結果 | 生成物 |
+| :--- | :--- | :--- | :--- |
+| BE-only | 無し | Vite をスキップ | `backend.js`, `appsscript.json` |
+| Vue | `sample-vue` を配置 | `vue`（自動判定） | + `index.html` 67.8 kB（JS/CSS インライン化） |
+| Vanilla | `sample-vanilla` を配置 | `vanilla`（自動判定） | + `index.html` 11.7 kB |
+
+`dist/backend.js` の先頭で `onOpen` / `executeMain` が `esbuild-gas-plugin` によりトップレベル関数として
+展開されていることも確認済み（GAS のメニュー・トリガーから呼び出せる形）。
+
+```js
+var global = this;
+function onOpen() {
+}
+function executeMain() {
+}
 ```
 
 補足: `diff -rq boilerplate/sample-vue/src/backend boilerplate/sample-vanilla/src/backend` および

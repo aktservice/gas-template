@@ -1,4 +1,4 @@
-import { SCHEMA, CONFIG_INITIAL_VALUES, SheetConfig } from "../../schema/schema";
+import { SCHEMA, CONFIG_INITIAL_VALUES, SheetConfig } from "../schema/schema";
 
 export function validateInfrastructure(): void {
   const spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet =

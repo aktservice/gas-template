@@ -4,16 +4,20 @@ import tailwindcss from "@tailwindcss/vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import handlebars from "vite-plugin-handlebars";
 import { resolve } from "path";
+import { existsSync } from "fs";
 
-const project = process.env.PROJECT;
-const frontendType = process.env.FRONTEND || "vue";
+const root = resolve(__dirname, "src/frontend");
+const outDir = resolve(__dirname, "dist");
 
-if (!project) {
-  throw new Error("Vite エラー: PROJECT環境変数を指定してください。");
+if (!existsSync(root)) {
+  throw new Error(
+    "src/frontend が存在しません。フロントエンドを使う場合は boilerplate/ からひな型をコピーしてください。",
+  );
 }
 
-const root = resolve(__dirname, `projects/${project}/src/frontend`);
-const outDir = resolve(__dirname, `projects/${project}/dist`);
+// FRONTEND 未指定時は src/frontend/src/App.vue の有無で Vue / Vanilla を自動判定する
+const frontendType =
+  process.env.FRONTEND ?? (existsSync(resolve(root, "src/App.vue")) ? "vue" : "vanilla");
 
 export default defineConfig({
   root,
@@ -29,6 +33,6 @@ export default defineConfig({
   build: {
     outDir,
     emptyOutDir: false, // バックエンドのビルド成果物(backend.js)を消去しないようにする
-    target: "es2019",   // クライアント側JSの互換性を考慮してES2019に引き下げ
+    target: "es2019", // クライアント側JSの互換性を考慮してES2019に引き下げ
   },
 });
