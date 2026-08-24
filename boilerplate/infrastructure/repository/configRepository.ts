@@ -1,4 +1,4 @@
-import { SCHEMA } from "./schema";
+import { SCHEMA } from "../schema/schema";
 
 export class ConfigRepository {
   private readonly configMap: Map<string, string> = new Map<string, string>();

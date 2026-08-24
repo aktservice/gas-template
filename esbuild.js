@@ -1,15 +1,15 @@
 import esbuild from "esbuild";
 import { GasPlugin } from "esbuild-gas-plugin";
-import { resolve } from "path";
+import fs from "fs";
 
-const project = process.env.PROJECT;
-if (!project) {
-  console.error("エラー: PROJECT環境変数を指定してください。 (例: PROJECT=sample-vue)");
+const entryPoint = "./src/backend/index.ts";
+const outfile = "./dist/backend.js";
+
+if (!fs.existsSync(entryPoint)) {
+  console.error(`❌ エントリポイントが見つかりません: ${entryPoint}`);
+  console.error(`   boilerplate/ からひな型をコピーして src/backend/index.ts を用意してください。`);
   process.exit(1);
 }
-
-const entryPoint = `./projects/${project}/src/backend/index.ts`;
-const outfile = `./projects/${project}/dist/backend.js`;
 
 esbuild
   .build({
@@ -23,6 +23,6 @@ esbuild
     charset: "utf8",
   })
   .catch((e) => {
-    console.error(`Esbuild ビルドエラー (${project}):`, e);
+    console.error(`Esbuild ビルドエラー:`, e);
     process.exit(1);
   });

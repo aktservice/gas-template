@@ -20,10 +20,10 @@ try {
   process.exit(1);
 }
 
-// 2. フロントエンドのビルド (vite.config.ts やフロントエンドコードが存在する場合のみ実行)
-// ※もしフロントエンドが完全に不要（BEのみ）なら、このif文ブロックごと削除しても大丈夫です。
-const hasFrontend =
-  fs.existsSync(path.join(srcPath, "frontend")) || fs.existsSync(path.resolve("vite.config.ts"));
+// 2. フロントエンドのビルド (src/frontend が存在する場合のみ実行)
+// 判定は「フロントエンドのソースが実在するか」で行う。
+// vite.config.ts はリポジトリに常設されているため、その有無で判定してはいけない。
+const hasFrontend = fs.existsSync(path.join(srcPath, "frontend", "index.html"));
 
 if (hasFrontend) {
   console.log(`📦 フロントエンドのビルドを実行中 (Vite)...`);

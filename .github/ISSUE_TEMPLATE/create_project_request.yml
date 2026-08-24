@@ -1,0 +1,38 @@
+name: "プロジェクト作成リクエスト"
+description: "新しいプロジェクト作成のリクエストフォーム"
+title: "[Create] {{title}}"
+labels: ["project","create"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: "タイトル"
+      description: "プロジェクトのタイトルを記入してください。"
+      placeholder: "例: 新しいチケット管理アプリ"
+      required: true
+
+  - type: dropdown
+    id: project_type
+    attributes:
+      label: "どのようなプロジェクト？"
+      description: "該当するものを選択してください。"
+      options:
+        - label: "ウェブアプリ"
+          value: "web_app"
+        - label: "Spreadsheetのメニュー"
+          value: "spreadsheet_menu"
+        - label: "その他"
+          value: "other"
+      required: true
+
+  - type: dropdown
+    id: execution_type
+    attributes:
+      label: "実行形式"
+      description: "自動実行かユーザー実行かを選択してください。"
+      options:
+        - label: "自動実行"
+          value: "automated"
+        - label: "ユーザー実行"
+          value: "user_triggered"
+      required: true
