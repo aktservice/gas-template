@@ -1,0 +1,20 @@
+name: "プロジェクト更新リクエスト"
+description: "既存プロジェクトの変更依頼フォーム"
+title: "[Update] {{title}}"
+labels: ["project","update"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: "タイトル"
+      description: "変更対象プロジェクトのタイトルを記入してください。"
+      placeholder: "例: 既存プロジェクト名"
+      required: true
+
+  - type: textarea
+    id: change_description
+    attributes:
+      label: "どのような変更？"
+      description: "実施したい変更内容を簡潔に記述してください。"
+      placeholder: "例: 新しいログイン機能を追加"
+      required: true

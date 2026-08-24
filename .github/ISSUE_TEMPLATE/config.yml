@@ -1,0 +1,19 @@
+blank_issues_enabled: false
+# Issue作成時のテンプレート設定
+defaults:
+  - template: 'bug_report.yml'
+    name: '🐛 バグ報告'
+    about: 'バグを報告する'
+  - template: 'feature_request.yml'
+    name: '💡 機能リクエスト'
+    about: '新機能のアイデアを提案する'
+  - template: 'create_project_request.yml'
+    name: '🆕 プロジェクト作成リクエスト'
+    about: '新しいプロジェクトの作成をリクエストする'
+  - template: 'update_project_request.yml'
+    name: '🔧 プロジェクト更新リクエスト'
+    about: '既存プロジェクトの更新をリクエストする'
+  - template: 'etc.md'
+    name: 'その他のIssue'
+    about: 'その他の記録'
+ 
