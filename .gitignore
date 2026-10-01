@@ -27,8 +27,9 @@ pnpm-debug.log*
 *.sw?
 
 # gasSecret
-.clasp.json
-backend/.clasp.json
+# .clasp.json は Git 管理する。認証情報（.clasprc.json）は誤コミット防止のため除外する。
+.clasprc.json
+**/.clasprc.json
 frontend/temp.config.js
 
 # boilerplate build outputs
