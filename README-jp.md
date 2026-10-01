@@ -23,7 +23,7 @@
 - **Node.js** (>= 18)
 - **npm** (Node.js に同梱)
 - **Docker**（オプション、コンテナ利用時）
-- **WSL2**（Windows 推奨） – 本リポジトリは `\\wsl.localhost\Ubuntu26\home\aktdev\agent\gas-template` をベースに設計されています。
+- **WSL2**（Windows 推奨）
 
 ### 1. インストール手順
 
@@ -34,10 +34,10 @@ cd gas-template
 # 依存パッケージをインストール
 npm ci   # package-lock.json を利用した再現性のあるインストール
 
-# templates から src ディレクトリへ必要なコードを配置
+# boilerplate から src ディレクトリへ必要なコードを配置
 # (※すでに src/ が存在し、上書きしたくない場合はご注意ください)
-cp -r templates/sample-vanilla/src/* ./src/
-cp templates/sample-vanilla/appsscript.json ./
+cp -r boilerplate/sample-vanilla/src/* ./src/
+cp boilerplate/sample-vanilla/appsscript.json ./
 
 # 開発コマンド一覧
 npm run dev
@@ -47,15 +47,19 @@ npm run build
 npm test
 ```
 
-#テストコマンド一覧
+## スクリプト一覧
 | スクリプト | コマンド | 説明 |
 | :--- | :--- | :--- |
 | `dev` | `vite` | フロントエンドの Vite 開発サーバーを起動（HMR有効） |
 | `build` | `node scripts/build.js` | フロントエンドとGASバックエンドを `dist/` へ一括本番ビルド |
 | `test` | `jest` | `test/` ディレクトリ配下の Jest 単体テストを実行 |
-| `typecheck` | `tsc --noEmit` | `tsconfig.json`（ES2019）に基づく全体の型チェックを実行 |
-| `lint` | `eslint . && prettier --check .` | コードスタイルと構文のエラーチェックを実行 |
-| `format` | `prettier --write .` | Prettier を使用して全体のコードフォーマットを自動修正 |
-| `docker:build` | `docker build -t gas-template .` | 開発・ビルド用の Docker イメージを生成 |
-| `docker:run` | `docker run --rm -v $(pwd):/app gas-template` | Docker コンテナを起動してクリーンビルドなどを実行 |
+| `typecheck` | `tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.frontend.json` | バックエンド（ES2019・DOMなし）とフロントエンド（DOMあり）の型チェックを実行 |
+| `format` | `prettier --write ...` | Prettier で `src/`・`boilerplate/`・`test/`・`scripts/` を整形 |
 
+
+## 補足
+
+- `boilerplate/*/dist/` はビルド成果物のため Git 管理外です。clone 直後は存在しません。
+- `esbuild-gas-plugin@0.9.0` は内部に `esbuild@0.18.20` を持ち、ルートの `esbuild`（0.25系）とバージョンが異なります。`esbuild.js` は JavaScript のため現状は型エラーになりません。
+- ルールファイルは `AGENTS.md` に集約しています（`CLAUDE.md` は `@AGENTS.md` を読み込むだけです）。
+- Docker 関連は `Dockerfile` / `docker-compose.yml` を参照してください。

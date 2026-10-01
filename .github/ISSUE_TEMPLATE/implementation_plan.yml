@@ -1,0 +1,28 @@
+name: 📋 実装計画
+description: 実装前に計画・判断事項を Issue として残す（plan.md の代わり）
+labels: ['enhancement']
+title: "[aktservice/projectName] 実装計画: 内容を具体的に記入"
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景・目的
+    validations:
+      required: true
+
+  - type: textarea
+    id: plan
+    attributes:
+      label: 実装方針
+      description: 変更するファイルや手順をチェックリストで記述してください
+      placeholder: |
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: decisions
+    attributes:
+      label: 判断が必要な事項
+    validations:
+      required: false

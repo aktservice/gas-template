@@ -30,3 +30,6 @@ pnpm-debug.log*
 .clasp.json
 backend/.clasp.json
 frontend/temp.config.js
+
+# boilerplate build outputs
+boilerplate/*/dist/

@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES2019", // GAS V8エンジンに合わせてモダンかつ互換性のあるES2019に
+		"lib": ["ES2019"], // バックエンドに DOM を含めない（MimeType 等の GAS 型が DOM と衝突するため）
 		"module": "ESNext",
 		"moduleResolution": "Bundler", // Vite/esbuildを使う場合の推奨設定
 		"strict": true,
@@ -21,7 +22,15 @@
 			"node"
 		]
 	},
+	"include": [
+		"@types",
+		"src/backend",
+		"test",
+		"boilerplate/*/src/backend",
+		"boilerplate/infrastructure"
+	],
 	"exclude": [
+		"@types/google-client.d.ts",
 		"node_modules",
 		"dist"
 	]
