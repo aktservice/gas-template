@@ -8,7 +8,7 @@
     "dev:vanilla": "FRONTEND=vanilla vite",
     "build": "node scripts/build.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.frontend.json",
     "format": "prettier --write \"src/**/*.{ts,vue,html}\" \"boilerplate/**/*.{ts,vue,html}\" \"test/**/*.ts\" \"scripts/**/*.js\""
   },
   "devDependencies": {

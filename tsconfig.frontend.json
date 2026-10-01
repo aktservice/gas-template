@@ -1,0 +1,19 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"lib": ["ES2019", "DOM", "DOM.Iterable"],
+		"types": ["node"]
+	},
+	"include": [
+		"@types/vue-shim.d.ts",
+		"@types/google-client.d.ts",
+		"src/frontend/**/*.ts",
+		"src/frontend/**/*.d.ts",
+		"boilerplate/*/src/frontend/**/*.ts",
+		"boilerplate/*/src/frontend/**/*.d.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
+}

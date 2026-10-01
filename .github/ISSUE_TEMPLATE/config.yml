@@ -16,4 +16,6 @@ defaults:
   - template: 'etc.md'
     name: 'その他のIssue'
     about: 'その他の記録'
- 
+   - template: 'implementation_plan.yml'
+    name: '📋 実装計画'
+    about: '実装前の計画・判断事項を記録する'
